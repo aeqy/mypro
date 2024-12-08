@@ -18,6 +18,8 @@ builder.Services.ConfigureServicesDatabase(builder.Configuration);
 
 // 注册仓储服务
 builder.Services.AddScoped<ITextEntryRepository, TextEntryRepository>();
+builder.Services.AddScoped<IMaterialTypeRepository, MaterialTypeRepository>();
+
 
 // 使用扩展方法添加 Swagger 服务
 builder.Services.AddSwaggerDocumentation();

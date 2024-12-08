@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material Type Management</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            min-height: 100vh;
+        }
+        nav {
+            width: 100%;
+            background-color: #333;
+            padding: 10px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 20px;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+            font-size: 16px;
+        }
+        nav ul li a:hover {
+            color: #FFD700;
+        }
+        .container {
+            padding: 80px 20px;
+            text-align: center;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        button {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .form-container {
+            margin: 20px auto;
+            width: 80%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+    <script>
+        let materialTypes = [];
+
+        async function fetchMaterialTypes() {
+            try {
+                const response = await fetch('/MaterialType');
+                if (response.ok) {
+                    materialTypes = await response.json();
+                    renderTable();
+                } else {
+                    console.error("Failed to fetch material types.");
+                }
+            } catch (error) {
+                console.error("Error fetching material types:", error);
+            }
+        }
+
+        function renderTable() {
+            const tableBody = document.getElementById('materialTypeTableBody');
+            tableBody.innerHTML = '';
+            materialTypes.forEach((type, index) => {
+                const row = `<tr>
+                    <td>${type.code}</td>
+                    <td>${type.name}</td>
+                    <td>${type.specification}</td>
+                    <td>${type.description}</td>
+                    <td>
+                        <button onclick="editMaterialType(${index})">Edit</button>
+                        <button onclick="deleteMaterialType(${index})">Delete</button>
+                    </td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        async function addMaterialType() {
+            const code = document.getElementById('materialTypeCode').value;
+            const name = document.getElementById('materialTypeName').value;
+            const specification = document.getElementById('materialTypeSpecification').value;
+            const description = document.getElementById('materialTypeDescription').value;
+
+            if (!code || !name || !specification || !description) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            try {
+                const response = await fetch('/MaterialType', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ code, name, specification, description })
+                });
+
+                if (response.ok) {
+                    alert("Material type added successfully.");
+                    fetchMaterialTypes();
+                    clearForm();
+                } else {
+                    const errorText = await response.text();
+                    console.error("Failed to add material type:", errorText);
+                    alert("Failed to add material type: " + errorText);
+                }
+            } catch (error) {
+                console.error("Error adding material type:", error);
+                alert("An error occurred while adding material type.");
+            }
+        }
+
+        function editMaterialType(index) {
+            const type = materialTypes[index];
+            document.getElementById('materialTypeCode').value = type.code;
+            document.getElementById('materialTypeName').value = type.name;
+            document.getElementById('materialTypeSpecification').value = type.specification;
+            document.getElementById('materialTypeDescription').value = type.description;
+            document.getElementById('submitButton').onclick = function() {
+                updateMaterialType(type.id); // 使用正确的 ID
+            };
+        }
+
+        async function updateMaterialType(id) {
+            const code = document.getElementById('materialTypeCode').value;
+            const name = document.getElementById('materialTypeName').value;
+            const specification = document.getElementById('materialTypeSpecification').value;
+            const description = document.getElementById('materialTypeDescription').value;
+
+            if (!code || !name || !specification || !description) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/MaterialType/${id}`, { // 使用传入的 ID
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ code, name, specification, description })
+                });
+
+                if (response.ok) {
+                    alert("Material type updated successfully.");
+                    fetchMaterialTypes();
+                    clearForm();
+                    document.getElementById('submitButton').onclick = addMaterialType;
+                } else {
+                    const errorText = await response.text();
+                    console.error("Failed to update material type:", errorText);
+                    alert("Failed to update material type: " + errorText);
+                }
+            } catch (error) {
+                console.error("Error updating material type:", error);
+                alert("An error occurred while updating material type.");
+            }
+        }
+
+        async function deleteMaterialType(index) {
+            const id = materialTypes[index].id; // 确保使用正确的 ID
+            try {
+                const response = await fetch(`/MaterialType/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    alert("Material type deleted successfully.");
+                    fetchMaterialTypes();
+                } else {
+                    const errorText = await response.text();
+                    console.error("Failed to delete material type:", errorText);
+                    alert("Failed to delete material type: " + errorText);
+                }
+            } catch (error) {
+                console.error("Error deleting material type:", error);
+                alert("An error occurred while deleting material type.");
+            }
+        }
+
+        function clearForm() {
+            document.getElementById('materialTypeCode').value = '';
+            document.getElementById('materialTypeName').value = '';
+            document.getElementById('materialTypeSpecification').value = '';
+            document.getElementById('materialTypeDescription').value = '';
+        }
+
+        window.onload = fetchMaterialTypes;
+    </script>
+</head>
+<body>
+<nav>
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="text-entry.html">Text Entry</a></li>
+        <li><a href="material-submission.html">Material Submission</a></li>
+        <li><a href="material-type.html">Material Type</a></li>
+    </ul>
+</nav>
+<div class="container">
+    <h1>Material Type Management</h1>
+    <div class="form-container">
+        <input type="text" id="materialTypeCode" placeholder="Material Type Code">
+        <input type="text" id="materialTypeName" placeholder="Material Type Name">
+        <input type="text" id="materialTypeSpecification" placeholder="Material Type Specification">
+        <input type="text" id="materialTypeDescription" placeholder="Material Type Description">
+        <button id="submitButton" onclick="addMaterialType()">Add Material Type</button>
+    </div>
+    <table>
+        <thead>
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th>Specification</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="materialTypeTableBody">
+        <!-- Material type rows will be added here dynamically -->
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
