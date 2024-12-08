@@ -1,0 +1,19 @@
+using MyPro.Application.Interfaces;
+using MyPro.Domain.Entities;
+using MyPro.Infrastructure.DbContex;
+
+namespace MyPro.Infrastructure.Repositories;
+
+public class TextEntryRepository(MyProDbContext context) : ITextEntryRepository
+{
+    public void AddTextEntry(TextEntry textEntry)
+    {
+        context.TextEntries.Add(textEntry);
+        context.SaveChanges();
+    }
+
+    public int GetTextEntryCount()
+    {
+        return context.TextEntries.Count();
+    }
+}

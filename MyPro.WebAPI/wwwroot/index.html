@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Entry</title>
+    <script>
+        async function addTextEntry() {
+            const content = document.getElementById('textInput').value;
+            if (!content) {
+                alert("Please enter some text.");
+                return;
+            }
+            const response = await fetch('/TextEntry', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(content)
+            });
+
+            if (response.ok) {
+                updateCount();
+                document.getElementById('textInput').value = ''; // 清空输入框
+            } else {
+                alert("Failed to submit text.");
+            }
+        }
+
+        async function updateCount() {
+            const response = await fetch('/TextEntry/count');
+            if (response.ok) {
+                const count = await response.json();
+                document.getElementById('countDisplay').innerText = `Stored Entries: ${count}`;
+            } else {
+                alert("Failed to retrieve count.");
+            }
+        }
+
+        window.onload = updateCount;
+    </script>
+</head>
+<body>
+<h1>Text Entry</h1>
+<input type="text" id="textInput" placeholder="Enter text here">
+<button onclick="addTextEntry()">Submit</button>
+<p id="countDisplay">Stored Entries: 0</p>
+</body>
+</html>
