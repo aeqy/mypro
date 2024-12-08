@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MyPro.Application.Interfaces;
+using MyPro.Application.UseCases;
 using MyPro.Infrastructure.DbContex;
 using MyPro.Infrastructure.Repositories;
 using MyPro.WebAPI.Extensions;
@@ -19,6 +20,10 @@ builder.Services.ConfigureServicesDatabase(builder.Configuration);
 // 注册仓储服务
 builder.Services.AddScoped<ITextEntryRepository, TextEntryRepository>();
 builder.Services.AddScoped<IMaterialTypeRepository, MaterialTypeRepository>();
+
+builder.Services.AddScoped<IBOMRepository, BOMRepository>();
+builder.Services.AddScoped<CreateBOM>();
+builder.Services.AddScoped<GetBOM>();
 
 
 // 使用扩展方法添加 Swagger 服务
