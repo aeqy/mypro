@@ -24,6 +24,8 @@ builder.Services.AddScoped<IMaterialTypeRepository, MaterialTypeRepository>();
 builder.Services.AddScoped<IBOMRepository, BOMRepository>();
 builder.Services.AddScoped<CreateBOM>();
 builder.Services.AddScoped<GetBOM>();
+builder.Services.AddScoped<UpdateBOM>(); // 确保注册 IUpdateBOM 和 UpdateBOM
+builder.Services.AddScoped<DeleteBOM>();
 
 
 // 使用扩展方法添加 Swagger 服务

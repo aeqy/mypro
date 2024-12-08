@@ -13,10 +13,14 @@ public class BOMController: ControllerBase
     private readonly CreateBOM _createBOM;
     private readonly GetBOM _getBom;
 
-    public BOMController(CreateBOM createBom, GetBOM getBom)
+    private readonly UpdateBOM _updateBom;
+    private readonly DeleteBOM _deleteBom;
+    public BOMController(CreateBOM createBom, GetBOM getBom, UpdateBOM updateBom, DeleteBOM deleteBom)
     {
         _createBOM = createBom;
         _getBom = getBom;
+        _updateBom = updateBom;
+        _deleteBom = deleteBom;
     }
 
     [HttpPost]
@@ -41,5 +45,38 @@ public class BOMController: ControllerBase
             return NotFound();
         }
         return Ok(bom);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(Guid id, [FromBody] BOMDto bomDto)
+    {
+        if (bomDto == null)
+        {
+            return BadRequest("BOM data is null.");
+        }
+
+        try
+        {
+            var result = await _updateBom.ExecuteAsync(id, bomDto);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        try
+        {
+            await _deleteBom.ExecuteAsync(id);
+            return NoContent();
+        }
+        catch (Exception ex)
+        {
+            return NotFound(ex.Message);
+        }
     }
 }
