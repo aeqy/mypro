@@ -19,6 +19,8 @@ builder.Services.ConfigureServicesDatabase(builder.Configuration);
 // 注册仓储服务
 builder.Services.AddScoped<ITextEntryRepository, TextEntryRepository>();
 
+// 使用扩展方法添加 Swagger 服务
+builder.Services.AddSwaggerDocumentation();
 
 var app = builder.Build();
 
@@ -28,6 +30,15 @@ var app = builder.Build();
 //     var dbContext = scope.ServiceProvider.GetRequiredService<MyProDbContext>();
 //     dbContext.Database.Migrate();
 // }
+
+// 配置中间件
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage(); // 开发环境异常页面
+
+    // 使用扩展方法启用 Swagger 中间件
+    app.UseSwaggerDocumentation();
+}
 
 
 // 使用默认文件中间件
