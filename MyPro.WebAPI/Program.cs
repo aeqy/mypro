@@ -1,4 +1,3 @@
-using MyPro.Application.Services;
 using MyPro.Domain.Interfaces;
 using MyPro.Infrastructure.Repositories;
 using MyPro.WebAPI.Extensions;
@@ -17,11 +16,6 @@ builder.Services.ConfigureServicesDatabase(builder.Configuration);
 
 // 注册仓储服务
 builder.Services.AddScoped<ITextEntryRepository, TextEntryRepository>();
-builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
-builder.Services.AddScoped<IMaterialTypeRepository, MaterialTypeRepository>();
-builder.Services.AddScoped<MaterialTypeService>();
-builder.Services.AddScoped<MaterialRepository>();
-builder.Services.AddScoped<BomService>();
 
 
 
