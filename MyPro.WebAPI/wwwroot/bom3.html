@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOM 管理系统</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+        }
+        .item {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .item h3 {
+            margin: 0;
+        }
+        .components {
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>产品 BOM 管理</h1>
+    <div id="bomList"></div>
+</div>
+
+<script>
+    // 示例数据
+    const bomData = [
+        {
+            id: '1',
+            name: '手机',
+            components: [
+                {
+                    id: '2',
+                    name: 'TP',
+                    components: [
+                        { id: '3', name: 'FOG', components: [] },
+                        { id: '4', name: '盖板', components: [] }
+                    ]
+                },
+                { id: '5', name: '电池', components: [] },
+                { id: '6', name: '喇叭', components: [] },
+                { id: '6', name: '喇叭', components: [] }
+            ]
+        }
+    ];
+
+    // 递归渲染 BOM
+    function renderBOM(item, container) {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'item';
+        itemDiv.innerHTML = `<h3>${item.name}</h3>`;
+
+        if (item.components && item.components.length > 0) {
+            const componentsDiv = document.createElement('div');
+            componentsDiv.className = 'components';
+            item.components.forEach(component => {
+                renderBOM(component, componentsDiv);
+            });
+            itemDiv.appendChild(componentsDiv);
+        }
+
+        container.appendChild(itemDiv);
+    }
+
+    // 初始化页面
+    function init() {
+        const bomList = document.getElementById('bomList');
+        bomData.forEach(item => {
+            renderBOM(item, bomList);
+        });
+    }
+
+    // 页面加载完成后初始化
+    window.onload = init;
+</script>
+</body>
+</html>

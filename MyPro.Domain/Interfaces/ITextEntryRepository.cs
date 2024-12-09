@@ -1,6 +1,6 @@
 using MyPro.Domain.Entities;
 
-namespace MyPro.Application.Interfaces;
+namespace MyPro.Domain.Interfaces;
 
 public interface ITextEntryRepository
 {

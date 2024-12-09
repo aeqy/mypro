@@ -1,5 +1,5 @@
-using MyPro.Application.Interfaces;
 using MyPro.Domain.Entities;
+using MyPro.Domain.Interfaces;
 using MyPro.Infrastructure.DbContex;
 
 namespace MyPro.Infrastructure.Repositories;

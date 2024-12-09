@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOM Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>BOM Management</h1>
+    <div class="bom-list">
+        <h2>BOM List</h2>
+        <table id="bomTable">
+            <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Code</th>
+                <th>Specification</th>
+                <th>Description</th>
+                <th>Materials</th>
+            </tr>
+            </thead>
+            <tbody id="bomList">
+            <!-- BOM items will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    async function fetchBOMData() {
+        try {
+            const response = await fetch('http://localhost:5233/api/bom'); // Adjust the URL as needed
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const boms = await response.json();
+            updateBOMList(boms);
+        } catch (error) {
+            console.error('Error fetching BOM data:', error);
+        }
+    }
+
+    function updateBOMList(boms) {
+        const bomListDiv = document.getElementById('bomList');
+        bomListDiv.innerHTML = '';
+        boms.forEach(bom => {
+            const materials = bom.bomMaterials.map(material => `ID: ${material.materialId}, Qty: ${material.quantity}`).join('<br>');
+            const bomRow = document.createElement('tr');
+            bomRow.innerHTML = `
+                    <td>${bom.name}</td>
+                    <td>${bom.code}</td>
+                    <td>${bom.specification || ''}</td>
+                    <td>${bom.description}</td>
+                    <td>${materials}</td>
+                `;
+            bomListDiv.appendChild(bomRow);
+        });
+    }
+
+    // Fetch BOM data on page load
+    window.onload = fetchBOMData;
+</script>
+</body>
+</html>
