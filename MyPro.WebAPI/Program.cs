@@ -1,4 +1,9 @@
+using MyPro.Application.Services;
+using MyPro.Domain.Common;
+using MyPro.Domain.Events;
 using MyPro.Domain.Interfaces;
+using MyPro.Domain.Repositories;
+using MyPro.Domain.Services;
 using MyPro.Infrastructure.Repositories;
 using MyPro.WebAPI.Extensions;
 
@@ -16,6 +21,15 @@ builder.Services.ConfigureServicesDatabase(builder.Configuration);
 
 // 注册仓储服务
 builder.Services.AddScoped<ITextEntryRepository, TextEntryRepository>();
+
+builder.Services.AddScoped<IMaterialTypeService, MaterialTypeService>();
+// 注册 IMaterialTypeRepository
+builder.Services.AddScoped<IMaterialTypeRepository, MaterialTypeRepository>();
+// 注册 IEventDispatcher
+builder.Services.AddScoped<IEventDispatcher, EventDispatcher>();
+// 注册 MaterialTypeDomainService
+builder.Services.AddScoped<MaterialTypeDomainService>();
+
 
 
 
